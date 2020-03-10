@@ -205,6 +205,13 @@ class UserController extends Controller
         // DB::table('users')->where('id', '=', 1001)->update([
         //     'email' => 'gustavo@upinside.com.br'
         // ]);
-        DB::table('users')->where('id', '=', 1001)->delete();
+        // DB::table('users')->where('id', '=', 1001)->delete();
+        $users = DB::table('users')->paginate(50);//Quantidade de itens por pagina
+
+        foreach ($users as $user) {
+            echo "#{$user->id} Nome: {$user->name} {$user->status}<br>";
+        }
+
+        echo $users->links();//print da paginação
     }
 }
