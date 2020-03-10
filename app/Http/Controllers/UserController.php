@@ -80,24 +80,45 @@ class UserController extends Controller
          * raw(exp)
          *      Nível mais baixo de expressão bruta, onde você pode informar a query completa
          */
+
+        //        $users = DB::select(DB::raw('SELECT
+        //                                    users.id,
+        //                                    users.name,
+        //
+        //                                    CASE
+        //                                        WHEN users.status = 1 THEN "ATIVO"
+        //                                        ELSE "INATIVO"
+        //                                    END status_description
+        //
+        //                                    FROM users
+        //	                                WHERE (SELECT COUNT(1) FROM addresses a WHERE a.user = users.id) > 2
+        //		                                AND users.status = :userStatus
+        //	                                ORDER BY updated_at - created_at ASC;'), ['userStatus' => '1']);
+        //
+        //        foreach ($users as $user) {
+        //            echo "#{$user->id} Nome: {$user->name} {$user->status_description}<br>";
+        //        }
+
+
+        /**
+         * chunk(count, closure)
+         *      * Obrigatório usar o orderBy
+         *      count = Quantidade de registros a ser processador por vez
+         *      closure = função anônima com a regra de negócio
+         *
+         * chunkById(count, closure)
+         *      count = Quantidade de registros a ser processador por vez
+         *      closure = função anônima com a regra de negócio
+         */
         
-        $users = DB::select(DB::raw('SELECT
-                                    users.id,
-                                    users.name,
+        DB::table('users')->where('id', '<', '500')->orderBy('id')->chunk(50, function($users){
+            foreach ($users as $user){
+                echo "#{$user->id} Nome: {$user->name} {$user->status}<br>";
+            }
 
-                                    CASE
-                                        WHEN users.status = 1 THEN "ATIVO"
-                                        ELSE "INATIVO"
-                                    END status_description
-
-                                    FROM users
-                                    WHERE (SELECT COUNT(1) FROM addresses a WHERE a.user = users.id) > 2
-                                        AND users.status = :userStatus
-                                    ORDER BY updated_at - created_at ASC;'), ['userStatus' => '1']);
-
-        foreach ($users as $user) {
-            echo "#{$user->id} Nome: {$user->name} {$user->status_description}<br>";
-        }
+            echo "Encerrou um ciclo!<br>";
+            sleep(1);
+        });
 
     }
 }
